@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-
-
 import { fetchRecommendations } from "../../lib/api";
 
-export default function query() {
+export default function Query() {
   const [query, setQuery] = useState("");
   const [topK, setTopK] = useState(7);
   const [results, setResults] = useState([]);
@@ -17,7 +15,13 @@ export default function query() {
     setErrorMsg("");
     try {
       const res = await fetchRecommendations(query, topK);
-      setResults(res);
+
+      const onlyTwo = (res.assessments || []).map(a => ({
+        name: a.name,
+        url: a.url
+      }));
+
+      setResults(onlyTwo);
     } catch (e) {
       setErrorMsg("Error communicating with API");
     } finally {
@@ -49,7 +53,7 @@ export default function query() {
 
       <button
         onClick={handleRecommend}
-        className="m-8 bg-blue-600 text-white mt-4 px-6 py-3 rounded-lg hover:bg-blue-700"
+        className="m-6 bg-blue-600 text-white mt-4 px-6 py-3 rounded-lg hover:bg-blue-700"
       >
         {loading ? "Loading…" : "Recommend"}
       </button>
@@ -60,21 +64,19 @@ export default function query() {
         <table className="mt-6 w-full border">
           <thead>
             <tr>
-              {Object.keys(results[0]).map((key) => (
-                <th key={key} className="border px-3 py-2 text-left">
-                  {key}
-                </th>
-              ))}
+              <th className="border px-3 py-2 text-left">Name</th>
+              <th className="border px-3 py-2 text-left">URL</th>
             </tr>
           </thead>
           <tbody>
             {results.map((row, i) => (
               <tr key={i}>
-                {Object.values(row).map((val, j) => (
-                  <td key={j} className="border px-3 py-2">
-                    {typeof val === "string" ? val : JSON.stringify(val)}
-                  </td>
-                ))}
+                <td className="border px-3 py-2">{row.name}</td>
+                <td className="border px-3 py-2">
+                  <a href={row.url} target="_blank" className="text-blue-400 underline">
+                    {row.url}
+                  </a>
+                </td>
               </tr>
             ))}
           </tbody>

@@ -1,6 +1,8 @@
 import React from 'react'
 
-import Query from "./comp/query";
+
+
+import Query from "./comp/Query"; // <-- use ./comp instead of ../comp
 
 import {UserButton} from '@clerk/nextjs'
 const Dashboard = () => {
